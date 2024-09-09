@@ -1,6 +1,23 @@
+import { useCallback } from 'react';
 import { QUEST_LEVELS, QUEST_TYPES } from '../../const';
+import { useAppDispatch, useAppSelector } from '../hook';
+import { SortingLevel } from '../../types/sorting-types/sorting-level';
+import { setSortingOptionLevel, setSortingOptionTypes } from '../../store/action';
+import { SortingTypes } from '../../types/sorting-types/sorting-types';
 
 function SortingOptions():JSX.Element {
+  const dispatch = useAppDispatch();
+  const selectedOptionLevel = useAppSelector((state) => state.sortingOptionLevel);
+  const selectedOptionType = useAppSelector((state) => state.sortingOptionTypes);
+
+  const handleSelectedSortingLevel = useCallback(
+    (option: SortingLevel) => dispatch(setSortingOptionLevel(option.id)), [dispatch]
+  );
+
+  const handleSelectedSortingTypes = useCallback(
+    (option: SortingTypes) => dispatch(setSortingOptionTypes(option.id)), [dispatch]
+  );
+
   return (
     <div className="page-content__item">
       <form className="filter" action="#" method="get">
@@ -9,8 +26,8 @@ function SortingOptions():JSX.Element {
           <ul className="filter__list">
             {
               QUEST_TYPES.map((type) => (
-                <li className="filter__item" key={type.id}>
-                  <input type="radio" name="type" id={type.id} checked />
+                <li className="filter__item" key={type.id} onClick={() => handleSelectedSortingTypes(type)}>
+                  <input type="radio" name="type" id={type.id} checked={selectedOptionType === type.id} />
                   <label className="filter__label" htmlFor={type.id}>
                     <svg className="filter__icon" width="26" height="30" aria-hidden="true">
                       <use xlinkHref={type.icon}></use>
@@ -28,8 +45,8 @@ function SortingOptions():JSX.Element {
           <ul className="filter__list">
             {
               QUEST_LEVELS.map((level) => (
-                <li className="filter__item" key={level.id}>
-                  <input type="radio" name="level" id={level.id} checked />
+                <li className="filter__item" key={level.id} onClick={() => handleSelectedSortingLevel(level)}>
+                  <input type="radio" name="level" id={level.id} checked={selectedOptionLevel === level.id} />
                   <label className="filter__label" htmlFor={level.id}>
                     <span className="filter__label-text">{level.title}</span>
                   </label>

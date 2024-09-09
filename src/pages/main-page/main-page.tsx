@@ -1,9 +1,18 @@
 import { useAppSelector } from '../../components/hook';
 import QuestsList from '../../components/quests/quests-list';
 import SortingOptions from '../../components/sorting-options/sorting-options';
+import { QUEST_LEVELS, QUEST_TYPES, } from '../../const';
 
 function MainPage(): JSX.Element {
   const quests = useAppSelector((state) => state.quests);
+  const selectedOptionLevel = useAppSelector((state) => state.sortingOptionLevel);
+  const selectedOptionTypes = useAppSelector((state) => state.sortingOptionTypes);
+
+  const filteredQuests = quests.filter((quest) => {
+    const matchesType = selectedOptionTypes === QUEST_TYPES[0].id || quest.type === selectedOptionTypes;
+    const matchesLevel = selectedOptionLevel === QUEST_LEVELS[0].id || quest.level === selectedOptionLevel;
+    return matchesLevel && matchesType;
+  });
 
   return (
     <div className="wrapper">
@@ -20,7 +29,7 @@ function MainPage(): JSX.Element {
 
           <h2 className="title visually-hidden">Выберите квест</h2>
 
-          <QuestsList quests={quests} />
+          <QuestsList quests={filteredQuests} />
         </div>
       </main>
 
