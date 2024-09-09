@@ -5,6 +5,7 @@ import { store } from './store';
 import { Provider } from 'react-redux';
 import { fetchQuestsAction } from './store/api-actions';
 import Header from './components/header/header';
+import Footer from './components/footer/footer';
 
 store.dispatch(fetchQuestsAction());
 
@@ -17,6 +18,7 @@ root.render(
     <Provider store={store}>
       <Header />
       <App />
+      <Footer />
     </Provider>
   </React.StrictMode>
 );
