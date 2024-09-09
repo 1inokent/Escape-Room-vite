@@ -1,4 +1,24 @@
+import { Link } from 'react-router-dom';
+import { AppRoute, AuthorizationStatus } from '../../const';
+import { useAppDispatch, useAppSelector } from '../hook';
+import { logoutAction } from '../../store/api-actions';
+
 function Header(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const userEmail = useAppSelector((state) => state.userEmail);
+
+  const navItems = [
+    { name: 'Квесты', path: AppRoute.Main },
+    { name: 'Контакты', path: '/contacts' },
+    ...(authorizationStatus === AuthorizationStatus.Auth ?
+      [{ name: 'Мои бронирования', path: '/my-quests' }] : [])
+  ];
+
+  const handleLogout = () => {
+    dispatch(logoutAction());
+  };
+
   return (
     <header className="header">
       <div className="container container--size-l">
@@ -9,20 +29,38 @@ function Header(): JSX.Element {
         </span>
         <nav className="main-nav header__main-nav">
           <ul className="main-nav__list">
-            <li className="main-nav__item">
-              <a className="link active" href="index.html">Квесты</a>
-            </li>
-            <li className="main-nav__item">
-              <a className="link" href="contacts.html">Контакты</a>
-            </li>
-            <li className="main-nav__item">
-              <a className="link" href="my-quests.html">Мои бронирования</a>
-            </li>
+            {
+              navItems.map((item) => (
+                <li className="main-nav__item" key={item.path}>
+                  <Link
+                    className={`link ${location.pathname === item.path ? 'active' : ''}`}
+                    to={item.path}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))
+            }
           </ul>
         </nav>
         <div className="header__side-nav">
-          <a className="btn btn--accent header__side-item" href="#">Выйти</a>
-          <a className="link header__side-item header__phone-link" href="tel:88003335599">8 (000) 111-11-11</a>
+          {
+            authorizationStatus === AuthorizationStatus.Auth ? (
+              <>
+                <Link
+                  className="btn btn--accent header__side-item"
+                  to={AppRoute.Login}
+                  onClick={handleLogout}
+                >Выйти
+                </Link>
+                <a className="link header__side-item header__phone-link" href="tel:88003335599">{userEmail}</a>
+              </>
+            ) :
+              <Link className="btn btn--accent header__side-item" to={AppRoute.Login}>
+              Вход
+              </Link>
+          }
+
         </div>
       </div>
     </header>

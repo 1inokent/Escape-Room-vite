@@ -1,3 +1,5 @@
+import Footer from '../../components/footer/footer';
+import Header from '../../components/header/header';
 import { useAppSelector } from '../../components/hook';
 import QuestsList from '../../components/quests/quests-list';
 import SortingOptions from '../../components/sorting-options/sorting-options';
@@ -16,9 +18,9 @@ function MainPage(): JSX.Element {
 
   return (
     <div className="wrapper">
+      <Header />
       <main className="page-content">
         <div className="container">
-
           <div className="page-content__title-wrapper">
             <h1 className="subtitle page-content__subtitle">квесты в Санкт-Петербурге
             </h1>
@@ -32,6 +34,8 @@ function MainPage(): JSX.Element {
           <QuestsList quests={filteredQuests} />
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

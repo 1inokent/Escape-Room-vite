@@ -26,8 +26,14 @@ function SortingOptions():JSX.Element {
           <ul className="filter__list">
             {
               QUEST_TYPES.map((type) => (
-                <li className="filter__item" key={type.id} onClick={() => handleSelectedSortingTypes(type)}>
-                  <input type="radio" name="type" id={type.id} checked={selectedOptionType === type.id} />
+                <li className="filter__item" key={type.id}>
+                  <input
+                    type="radio"
+                    name="type"
+                    id={type.id}
+                    checked={selectedOptionType === type.id}
+                    onChange={() => handleSelectedSortingTypes(type)}
+                  />
                   <label className="filter__label" htmlFor={type.id}>
                     <svg className="filter__icon" width="26" height="30" aria-hidden="true">
                       <use xlinkHref={type.icon}></use>
@@ -45,8 +51,14 @@ function SortingOptions():JSX.Element {
           <ul className="filter__list">
             {
               QUEST_LEVELS.map((level) => (
-                <li className="filter__item" key={level.id} onClick={() => handleSelectedSortingLevel(level)}>
-                  <input type="radio" name="level" id={level.id} checked={selectedOptionLevel === level.id} />
+                <li className="filter__item" key={level.id}>
+                  <input
+                    type="radio"
+                    name="level"
+                    id={level.id}
+                    checked={selectedOptionLevel === level.id}
+                    onChange={() => handleSelectedSortingLevel(level)}
+                  />
                   <label className="filter__label" htmlFor={level.id}>
                     <span className="filter__label-text">{level.title}</span>
                   </label>
