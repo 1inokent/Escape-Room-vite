@@ -1,9 +1,12 @@
 enum AppRoute {
   Main = '/',
+  Login = '/login',
 }
 
 enum ApiRoute {
   Quest = '/quest',
+  Login = '/login',
+  Logout = '/logout',
 }
 
 enum SortingOptionLevelTitle {
@@ -19,6 +22,12 @@ enum SortingOptionTypesTitle {
   Mystic = 'Мистика',
   Detective = 'Детектив',
   SciFi = 'Sci-fi',
+}
+
+enum AuthorizationStatus {
+  Auth = 'AUTH',
+  NoAuth = 'NO_AUTH',
+  Unknown = 'UNKNOWN',
 }
 
 const QUEST_TYPES = [
@@ -55,4 +64,5 @@ export {
   QUEST_LEVELS,
   SortingOptionLevelTitle,
   SortingOptionTypesTitle,
+  AuthorizationStatus,
 };
