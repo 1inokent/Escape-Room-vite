@@ -43,8 +43,9 @@ const checkAuthAction = createAsyncThunk<
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
       return;
     }
-
+    dispatch(setDataLoading(false));
     const { data } = await api.get<UserData>(ApiRoute.Login);
+    dispatch(setDataLoading(false));
     dispatch(getUserData(data));
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
   } catch {
