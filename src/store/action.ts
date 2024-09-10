@@ -16,6 +16,7 @@ const requireAuthorization = createAction<AuthorizationStatus>(
   'user/requireAuthorization'
 );
 const getUserData = createAction<UserData>('user/getUserData');
+const setDataLoading = createAction<boolean>('data/setDataLoading');
 
 export {
   loadQuests,
@@ -23,4 +24,5 @@ export {
   setSortingOptionTypes,
   requireAuthorization,
   getUserData,
+  setDataLoading,
 };

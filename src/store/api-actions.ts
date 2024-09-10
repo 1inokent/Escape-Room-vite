@@ -3,7 +3,12 @@ import { AxiosInstance } from 'axios';
 import { AppDispatch, Store } from '../types/store/store';
 import { Quests } from '../types/quests-types/quests';
 import { ApiRoute, AuthorizationStatus } from '../const';
-import { getUserData, loadQuests, requireAuthorization } from './action';
+import {
+  getUserData,
+  loadQuests,
+  requireAuthorization,
+  setDataLoading,
+} from './action';
 import { dropToken, getToken, saveToken } from '../service/token';
 import { UserData } from '../types/user-types';
 import { AuthData } from '../types/auth-data';
@@ -17,7 +22,9 @@ const fetchQuestsAction = createAsyncThunk<
     extra: AxiosInstance;
   }
 >('quest/fetchQuests', async (_arg, { dispatch, extra: api }) => {
+  dispatch(setDataLoading(false));
   const { data } = await api.get<Quests>(ApiRoute.Quest);
+  dispatch(setDataLoading(false));
   dispatch(loadQuests(data));
 });
 

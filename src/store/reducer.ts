@@ -4,6 +4,7 @@ import {
   getUserData,
   loadQuests,
   requireAuthorization,
+  setDataLoading,
   setSortingOptionLevel,
   setSortingOptionTypes,
 } from './action';
@@ -15,6 +16,7 @@ type initialStateProps = {
   sortingOptionTypes: (typeof QUEST_TYPES)[number]['id'];
   authorizationStatus: AuthorizationStatus;
   userEmail: string | null;
+  isDataLoading: boolean;
 };
 
 const initialState: initialStateProps = {
@@ -23,6 +25,7 @@ const initialState: initialStateProps = {
   sortingOptionTypes: QUEST_TYPES[0].id,
   authorizationStatus: AuthorizationStatus.Unknown,
   userEmail: null,
+  isDataLoading: true,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -42,6 +45,9 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(getUserData, (state, action) => {
       const { email } = action.payload;
       state.userEmail = email;
+    })
+    .addCase(setDataLoading, (state, action) => {
+      state.isDataLoading = action.payload;
     });
 });
 
