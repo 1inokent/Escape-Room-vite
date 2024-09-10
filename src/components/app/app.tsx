@@ -4,6 +4,10 @@ import MainPage from '../../pages/main-page/main-page';
 import LoginPage from '../../pages/login-page/login-page';
 import { useAppSelector } from '../hook';
 import SpinnerLoader from '../spinner-loader/spinner-loader';
+import ContactsPage from '../../pages/contacts-page/contacts-page';
+import QuestPage from '../../pages/quest-page/quest-page';
+import PrivateRoute from '../private-route/private-route';
+import BookingPage from '../../pages/booking-page/booking-page';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
@@ -20,6 +24,14 @@ function App(): JSX.Element {
       <Routes>
         <Route path={AppRoute.Main}>
           <Route index element={<MainPage />} />
+          <Route path={AppRoute.Quest} element={<QuestPage />} />
+          <Route path={AppRoute.Contacts} element={<ContactsPage />} />
+          <Route path={AppRoute.Booking} element={
+            <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
+              <BookingPage />
+            </PrivateRoute>
+          }
+          />
           <Route path={AppRoute.Login} element={<LoginPage />} />
         </Route>
       </Routes>

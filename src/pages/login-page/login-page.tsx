@@ -43,7 +43,7 @@ function LoginPage():JSX.Element {
   };
 
   return (
-    <>
+    <div className="wrapper">
       <Header />
 
       <main className="decorated-page login">
@@ -136,7 +136,7 @@ function LoginPage():JSX.Element {
           </div>
         </div>
       </main>
-    </>
+    </div>
   );
 }
 

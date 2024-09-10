@@ -1,12 +1,16 @@
 enum AppRoute {
   Main = '/',
   Login = '/login',
+  Contacts = '/contacts',
+  Quest = '/quest/:id',
+  Booking = '/quest/:id/booking',
 }
 
 enum ApiRoute {
   Quest = '/quest',
   Login = '/login',
   Logout = '/logout',
+  Booking= '/booking'
 }
 
 enum SortingOptionLevelTitle {
@@ -56,6 +60,9 @@ const QUEST_LEVELS = [
 
 const AUTH_TOKEN_KEY = 'escape-room-token';
 
+const PATH_MARKER_DEFAULT = 'public/img/svg/pin-default.svg';
+const PATH_MARKER_CURRENT = 'public/img/svg/pin-active.svg';
+
 export {
   AUTH_TOKEN_KEY,
   AppRoute,
@@ -65,4 +72,6 @@ export {
   SortingOptionLevelTitle,
   SortingOptionTypesTitle,
   AuthorizationStatus,
+  PATH_MARKER_DEFAULT,
+  PATH_MARKER_CURRENT,
 };
