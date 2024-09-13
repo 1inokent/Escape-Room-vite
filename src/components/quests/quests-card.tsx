@@ -1,5 +1,6 @@
-import { QUEST_LEVELS } from '../../const';
-import { Quest } from '../../types/quests-types/quests';
+import { generatePath, Link } from 'react-router-dom';
+import { AppRoute, QUEST_LEVELS } from '../../const';
+import { Quest } from '../../types/quests-types/quests-types';
 
 type QuestsCardProps = {
   quest: Quest;
@@ -7,6 +8,7 @@ type QuestsCardProps = {
 
 function QuestsCard({quest}: QuestsCardProps):JSX.Element {
   const {
+    id,
     title,
     peopleMinMax,
     level,
@@ -14,7 +16,7 @@ function QuestsCard({quest}: QuestsCardProps):JSX.Element {
     previewImgWebp
   } = quest;
 
-  const translatedLevel = QUEST_LEVELS.find((questLevel) => questLevel.id === level)?.title || level ;
+  const translatedLevel = QUEST_LEVELS.find((questLevel) => questLevel.id === level)?.title || level;
 
   return (
     <div className="quest-card">
@@ -22,14 +24,20 @@ function QuestsCard({quest}: QuestsCardProps):JSX.Element {
         <picture>
           <source type="image/webp" srcSet={previewImgWebp} />
           <img src={previewImg}
-            srcSet={previewImg}
+            srcSet={`${previewImg} 2x`}
             width="344" height="232"
             alt={title}
           />
         </picture>
       </div>
       <div className="quest-card__content">
-        <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">{title}</a>
+        <div className="quest-card__info-wrapper">
+          <Link
+            className="quest-card__link"
+            to={generatePath(AppRoute.Quest, {id})}
+          >
+            {title}
+          </Link>
         </div>
         <ul className="tags quest-card__tags">
           <li className="tags__item">

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
 import Header from '../../components/header/header';
@@ -11,11 +11,18 @@ type FormInputProps = {
   userPassword: string;
 }
 
+interface LocationState {
+  from?: string;
+}
+
 function LoginPage():JSX.Element {
   const dispatch = useAppDispatch();
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const state = location.state as LocationState | undefined;
+  const from = state?.from || AppRoute.Main;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -26,9 +33,9 @@ function LoginPage():JSX.Element {
 
   useEffect(() => {
     if (authorizationStatus === AuthorizationStatus.Auth) {
-      navigate(AppRoute.Main);
+      navigate(from);
     }
-  }, [authorizationStatus, navigate]);
+  }, [authorizationStatus, from, navigate]);
 
   const onSubmit: SubmitHandler<FormInputProps> = async (data) => {
     try {
@@ -37,13 +44,14 @@ function LoginPage():JSX.Element {
         password: data.userPassword,
       })).unwrap();
       setErrorMessage(null);
+      navigate(from);
     } catch (error) {
       setErrorMessage('Не удалось выполнить вход. Пожалуйста, проверьте данные и попробуйте снова.');
     }
   };
 
   return (
-    <>
+    <div className="wrapper">
       <Header />
 
       <main className="decorated-page login">
@@ -68,7 +76,6 @@ function LoginPage():JSX.Element {
               className="login-form"
               action="https://echo.htmlacademy.ru/"
               method="post"
-              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="login-form__inner-wrapper">
@@ -136,7 +143,7 @@ function LoginPage():JSX.Element {
           </div>
         </div>
       </main>
-    </>
+    </div>
   );
 }
 

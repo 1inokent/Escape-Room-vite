@@ -1,12 +1,19 @@
+import { Location } from './types/booking-types/booking-types';
+
 enum AppRoute {
   Main = '/',
   Login = '/login',
+  Contacts = '/contacts',
+  Quest = '/quest/:id',
+  Booking = '/quest/:id/booking',
+  Reservation = '/my-quests',
 }
 
 enum ApiRoute {
   Quest = '/quest',
   Login = '/login',
   Logout = '/logout',
+  Booking = '/booking',
 }
 
 enum SortingOptionLevelTitle {
@@ -54,7 +61,15 @@ const QUEST_LEVELS = [
   { id: 'hard', title: SortingOptionLevelTitle.Hard },
 ] as const;
 
+const DEFAULT_LOCATION_FOR_CONTACTS: Location = {
+  address: 'Санкт-Петербург, Набережная реки Карповка, д 5П',
+  coords: [59.9635, 30.3368],
+};
+
 const AUTH_TOKEN_KEY = 'escape-room-token';
+
+const PATH_MARKER_DEFAULT = '../../public/img/svg/pin-default.svg';
+const PATH_MARKER_CURRENT = '../../public/img/svg/pin-active.svg';
 
 export {
   AUTH_TOKEN_KEY,
@@ -65,4 +80,7 @@ export {
   SortingOptionLevelTitle,
   SortingOptionTypesTitle,
   AuthorizationStatus,
+  PATH_MARKER_DEFAULT,
+  PATH_MARKER_CURRENT,
+  DEFAULT_LOCATION_FOR_CONTACTS,
 };
