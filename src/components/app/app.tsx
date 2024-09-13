@@ -8,6 +8,7 @@ import ContactsPage from '../../pages/contacts-page/contacts-page';
 import QuestPage from '../../pages/quest-page/quest-page';
 import PrivateRoute from '../private-route/private-route';
 import BookingPage from '../../pages/booking-page/booking-page';
+import MyQuestPage from '../../pages/my-quest-page/my-quest-page';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
@@ -29,6 +30,12 @@ function App(): JSX.Element {
           <Route path={AppRoute.Booking} element={
             <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
               <BookingPage />
+            </PrivateRoute>
+          }
+          />
+          <Route path={AppRoute.Reservation} element={
+            <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
+              <MyQuestPage />
             </PrivateRoute>
           }
           />

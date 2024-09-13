@@ -24,7 +24,7 @@ function QuestsCard({quest}: QuestsCardProps):JSX.Element {
         <picture>
           <source type="image/webp" srcSet={previewImgWebp} />
           <img src={previewImg}
-            srcSet={previewImg}
+            srcSet={`${previewImg} 2x`}
             width="344" height="232"
             alt={title}
           />

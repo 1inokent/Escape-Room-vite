@@ -58,7 +58,7 @@ const fetchQuestByIdAction = createAsyncThunk<
   } catch (error) {
     dispatch(
       setError(
-        error instanceof Error ? error.message : 'Failed to fetch booking'
+        error instanceof Error ? error.message : 'Failed to fetch quest'
       )
     );
   } finally {

@@ -1,26 +1,33 @@
-import { generatePath, Link, useParams } from 'react-router-dom';
+import { generatePath, Link, useNavigate, useParams } from 'react-router-dom';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchQuestByIdAction } from '../../store/api-actions';
-import ErrorMessage from '../../components/error-message/error-message';
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import { translateQuestAttributes } from '../../utils';
 
 function QuestPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const questPage = useAppSelector((state) => state.questPage);
+  const isAuthorizedStatus = useAppSelector((state) => state.authorizationStatus);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { id: paramId } = useParams();
   const id: string | null = paramId ?? null;
 
   useEffect(() => {
+    if (!id) {
+      return;
+    }
+
     const fetchData = async () => {
       if (id) {
         try {
           await dispatch(fetchQuestByIdAction(id));
+          setErrorMessage(null);
         } catch (error) {
-          <ErrorMessage />;
+          setErrorMessage('Ошибка при загрузке данных. Попробуйте перезагрузить страницу.');
         }
       }
     };
@@ -38,15 +45,27 @@ function QuestPage(): JSX.Element {
     peopleMinMax,
     description,
     coverImg,
-    coverImgWebp
+    coverImgWebp,
+    previewImg,
   } = questPage;
 
   const { translatedLevel, translatedType } = translateQuestAttributes(level, type);
+
+  const handleBookingClick = () => {
+    const bookingPath = generatePath(AppRoute.Booking, {id});
+    if (isAuthorizedStatus !== AuthorizationStatus.Auth) {
+      navigate(AppRoute.Login, { state: { from: bookingPath } });
+    } else {
+      navigate(bookingPath);
+    }
+  };
 
   return (
     <div className='wrapper'>
       <Header />
       <main className="decorated-page quest-page">
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+
         <div className="decorated-page__decor" aria-hidden="true">
           <picture>
             <source
@@ -54,11 +73,9 @@ function QuestPage(): JSX.Element {
               srcSet={coverImgWebp}
             />
             <img
-              src="img/content/maniac/maniac-size-m.jpg"
+              src={previewImg}
               srcSet={coverImg}
-              width="1366"
-              height="768"
-              alt=""
+              alt={title}
             />
           </picture>
         </div>
@@ -80,12 +97,13 @@ function QuestPage(): JSX.Element {
               </li>
             </ul>
             <p className="quest-page__description">{description}</p>
-            <Link
+            <button
+              type='button'
               className="btn btn--accent btn--cta quest-page__btn"
-              to={generatePath(AppRoute.Booking, { id })}
+              onClick={handleBookingClick}
             >
                 Забронировать
-            </Link>
+            </button>
           </div>
         </div>
       </main>

@@ -1,9 +1,10 @@
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
+import Map from '../../components/map/map';
 
 function ContactsPage():JSX.Element {
   return (
-    <>
+    <div className='wrapper'>
       <Header />
 
       <main className="page-content decorated-page">
@@ -57,7 +58,7 @@ function ContactsPage():JSX.Element {
             <div className="contacts__map">
               <div className="map">
                 <div className="map__container">
-
+                  <Map />
                 </div>
               </div>
             </div>
@@ -66,7 +67,7 @@ function ContactsPage():JSX.Element {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

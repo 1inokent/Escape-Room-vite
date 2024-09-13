@@ -1,47 +1,47 @@
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
-import { useEffect } from 'react';
-import ErrorMessage from '../../components/error-message/error-message';
-import { fetchBookingByIdAction, fetchQuestByIdAction } from '../../store/api-actions';
-import { AppRoute } from '../../const';
-import { translateQuestAttributes } from '../../utils';
-import { Bookings } from '../../types/booking-types/booking-types';
-import { QuestPage } from '../../types/quests-types/quest-page-types';
 import BookingDate from '../../components/booking/booking-date';
 import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
+import Map from '../../components/map/map';
+
+import { fetchBookingByIdAction } from '../../store/api-actions';
+
+import { Bookings } from '../../types/booking-types/booking-types';
+import { QuestPage } from '../../types/quests-types/quest-page-types';
+import BookingForm from '../../components/booking/booking-form';
 
 function BookingPage():JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const bookingsById = useAppSelector<Bookings | null>((state) => state.reservedsQuest);
   const questPage = useAppSelector<QuestPage | null>((state) => state.questPage);
   const { id } = useParams();
+
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
         try {
-          await dispatch(fetchQuestByIdAction(id));
           await dispatch(fetchBookingByIdAction(id));
         } catch (error) {
-          <ErrorMessage />;
+          navigate('404');
         }
       }
     };
 
     fetchData();
-  }, [dispatch, id]);
+  }, [dispatch, id, navigate]);
 
   if (!bookingsById || !questPage) {
     return <SpinnerLoader />;
   }
 
-  if (!bookingsById) {
-    return <div>Can`t find quest page <Link to={AppRoute.Main}>Go back main page</Link></div>;
-  }
-
-  const { translatedType } = translateQuestAttributes(questPage.type);
+  const selectedPlace = bookingsById.find((booking) => booking.id === selectedPlaceId) || bookingsById[0];
 
   return (
     <div className="wrapper">
@@ -51,13 +51,11 @@ function BookingPage():JSX.Element {
           <picture>
             <source
               type="image/webp"
-              srcSet={questPage.coverImgWebp}
+              srcSet={`${questPage.coverImgWebp}`}
             />
             <img
-              src={questPage.coverImg}
-              srcSet="img/content/maniac/maniac-bg-size-m@2x.jpg 2x"
-              width="1366"
-              height="1959"
+              src={questPage.previewImg}
+              srcSet={questPage.coverImg}
               alt={questPage.title}
             />
           </picture>
@@ -66,79 +64,30 @@ function BookingPage():JSX.Element {
           <div className="page-content__title-wrapper">
             <h1 className="subtitle subtitle--size-l page-content__subtitle">Бронирование квеста
             </h1>
-            <p className="title title--size-m title--uppercase page-content__title">{translatedType}</p>
+            <p className="title title--size-m title--uppercase page-content__title">{questPage.title}</p>
           </div>
+
           <div className="page-content__item">
             <div className="booking-map">
               <div className="map">
-                <div className="map__container"></div>
+                <Map
+                  availableQuests={bookingsById}
+                  selectedPlaceId={selectedPlace.id || ''}
+                  onPlaceSelect={setSelectedPlaceId}
+                />
               </div>
-              <p className="booking-map__address">Вы&nbsp;выбрали: наб. реки Карповки&nbsp;5, лит&nbsp;П, м. Петроградская</p>
+              <p className="booking-map__address">Вы&nbsp;выбрали: {selectedPlace.location.address}</p>
             </div>
           </div>
 
           <form className="booking-form" action="https://echo.htmlacademy.ru/" method="post">
             <fieldset className="booking-form__section">
               <legend className="visually-hidden">Выбор даты и времени</legend>
-              {
-                bookingsById.map((booking) => (
-                  <div key={booking.id}>
-                    <BookingDate booking={booking} />
-                  </div>
-                ))
-              }
+              <BookingDate booking={selectedPlace} />
             </fieldset>
 
-            <fieldset className="booking-form__section">
-              <legend className="visually-hidden">Контактная информация</legend>
-              <div className="custom-input booking-form__input">
-                <label className="custom-input__label" htmlFor="name">Ваше имя</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Имя"
-                  required
-                  pattern="[А-Яа-яЁёA-Za-z'- ]{1,}"
-                />
-              </div>
-              <div className="custom-input booking-form__input">
-                <label className="custom-input__label" htmlFor="tel">Контактный телефон</label>
-                <input
-                  type="tel"
-                  id="tel"
-                  name="tel"
-                  placeholder="Телефон"
-                  required
-                  pattern="[0-9]{10,}"
-                />
-              </div>
-              <div className="custom-input booking-form__input">
-                <label className="custom-input__label" htmlFor="person">Количество участников</label>
-                <input
-                  type="number"
-                  id="person"
-                  name="person"
-                  placeholder="Количество участников"
-                  required
-                />
-              </div>
-              <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--children">
-                <input
-                  type="checkbox"
-                  id="children"
-                  name="children"
-                  checked
-                />
-                <span className="custom-checkbox__icon">
-                  <svg width="20" height="17" aria-hidden="true">
-                    <use xlinkHref="#icon-tick"></use>
-                  </svg>
-                </span><span className="custom-checkbox__label">Со&nbsp;мной будут дети</span>
-              </label>
-            </fieldset>
+            <BookingForm quest={questPage} />
 
-            <button className="btn btn--accent btn--cta booking-form__submit" type="submit">Забронировать</button>
             <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--agreement">
               <input
                 type="checkbox"
@@ -160,6 +109,7 @@ function BookingPage():JSX.Element {
           </form>
         </div>
       </main>
+
       <Footer />
     </div>
   );
