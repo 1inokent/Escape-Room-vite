@@ -15,7 +15,12 @@ const ICON_ANCHOR: PointTuple = [23, 42];
 
 function Map({ availableQuests = [], selectedPlaceId, onPlaceSelect }: MapProps):JSX.Element {
   const mapRef = useRef(null);
-  const map = useMap(mapRef, availableQuests.length > 0 ? availableQuests[0].location : DEFAULT_LOCATION_FOR_CONTACTS);
+  const map = useMap(
+    mapRef,
+    availableQuests.length > 0 ?
+      availableQuests[0].location
+      : DEFAULT_LOCATION_FOR_CONTACTS
+  );
   const markerLayer = useRef<LayerGroup>(leaflet.layerGroup());
 
   const defaultIcon = leaflet.icon({

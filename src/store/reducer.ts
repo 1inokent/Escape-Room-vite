@@ -1,24 +1,28 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { Quests } from '../types/quests-types/quests-types';
+import { AuthorizationStatus, QUEST_LEVELS, QUEST_TYPES } from '../const';
 import {
   getUserData,
   loadBookingById,
   loadQuestById,
   loadQuests,
+  loadReservation,
   requireAuthorization,
   setDataLoading,
   setError,
   setSortingOptionLevel,
   setSortingOptionTypes,
 } from './action';
-import { AuthorizationStatus, QUEST_LEVELS, QUEST_TYPES } from '../const';
+
+import { Quests } from '../types/quests-types/quests-types';
 import { QuestPage } from '../types/quests-types/quest-page-types';
 import { Bookings } from '../types/booking-types/booking-types';
+import { ReservetionsTypes } from '../types/reservetion-types/reservetion-types';
 
 type initialStateProps = {
   quests: Quests;
   questPage: QuestPage | null;
-  reservedsQuest: Bookings | null;
+  bookingsQuest: Bookings;
+  reservedsQuests: ReservetionsTypes;
   sortingOptionLevel: (typeof QUEST_LEVELS)[number]['id'];
   sortingOptionTypes: (typeof QUEST_TYPES)[number]['id'];
   authorizationStatus: AuthorizationStatus;
@@ -30,7 +34,8 @@ type initialStateProps = {
 const initialState: initialStateProps = {
   quests: [],
   questPage: null,
-  reservedsQuest: null,
+  bookingsQuest: [],
+  reservedsQuests: [],
   sortingOptionLevel: QUEST_LEVELS[0].id,
   sortingOptionTypes: QUEST_TYPES[0].id,
   authorizationStatus: AuthorizationStatus.Unknown,
@@ -48,7 +53,10 @@ const reducer = createReducer(initialState, (builder) => {
       state.questPage = action.payload;
     })
     .addCase(loadBookingById, (state, action) => {
-      state.reservedsQuest = action.payload;
+      state.bookingsQuest = action.payload;
+    })
+    .addCase(loadReservation, (state, action) => {
+      state.reservedsQuests = action.payload;
     })
     .addCase(setSortingOptionLevel, (state, action) => {
       state.sortingOptionLevel = action.payload;

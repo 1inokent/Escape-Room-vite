@@ -1,10 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
 import Header from '../../components/header/header';
-import { useEffect, useState } from 'react';
-import { AppRoute, AuthorizationStatus } from '../../const';
 import { loginAction } from '../../store/api-actions';
+import { AppRoute, AuthorizationStatus } from '../../const';
 
 type FormInputProps = {
   userEmail: string;
@@ -20,6 +20,8 @@ function LoginPage():JSX.Element {
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
   const navigate = useNavigate();
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const location = useLocation();
   const state = location.state as LocationState | undefined;
   const from = state?.from || AppRoute.Main;
@@ -31,14 +33,9 @@ function LoginPage():JSX.Element {
     formState: { errors }
   } = useForm<FormInputProps>();
 
-  useEffect(() => {
-    if (authorizationStatus === AuthorizationStatus.Auth) {
-      navigate(from);
-    }
-  }, [authorizationStatus, from, navigate]);
-
   const onSubmit: SubmitHandler<FormInputProps> = async (data) => {
     try {
+      setIsSubmitting(true);
       await dispatch(loginAction({
         login: data.userEmail,
         password: data.userPassword,
@@ -47,8 +44,16 @@ function LoginPage():JSX.Element {
       navigate(from);
     } catch (error) {
       setErrorMessage('Не удалось выполнить вход. Пожалуйста, проверьте данные и попробуйте снова.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      navigate(from);
+    }
+  }, [authorizationStatus, from, navigate]);
 
   return (
     <div className="wrapper">
@@ -87,6 +92,7 @@ function LoginPage():JSX.Element {
                       type="email"
                       id="email"
                       placeholder="Адрес электронной почты"
+                      disabled={isSubmitting}
                       {...register('userEmail', {
                         required: 'Email обязателен',
                         pattern: {
@@ -103,6 +109,7 @@ function LoginPage():JSX.Element {
                       type="password"
                       id="password"
                       placeholder="Пароль"
+                      disabled={isSubmitting}
                       {...register('userPassword', {
                         required: 'Пароль обязателен',
                         minLength: { value: 3, message: 'Пароль должен быть минимум 3 символа' },
@@ -116,10 +123,15 @@ function LoginPage():JSX.Element {
                     {errors.userPassword && <p className="error-message">{errors.userPassword.message}</p>}
                   </div>
                 </div>
-
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-                <button className="btn btn--accent btn--general login-form__submit" type="submit">Войти</button>
+                <button
+                  className="btn btn--accent btn--general login-form__submit"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Войти
+                </button>
               </div>
               <label className="custom-checkbox login-form__checkbox">
                 <input

@@ -1,4 +1,4 @@
-import { generatePath, Link, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { fetchQuestByIdAction } from '../../store/api-actions';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { translateQuestAttributes } from '../../utils';
+import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
 
 function QuestPage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -35,7 +36,7 @@ function QuestPage(): JSX.Element {
   }, [dispatch, id]);
 
   if (!questPage) {
-    return <div>Can`t find quest page <Link to={AppRoute.Main}>Go back main page</Link></div>;
+    return <SpinnerLoader />;
   }
 
   const {

@@ -2,9 +2,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Спиннер будет по центру экрана */
-  background-color: var(--spinner-bg, hsl(223, 10%, 90%)); /* Фоновый цвет спиннера */
-  color: var(--spinner-fg, hsl(223, 10%, 10%)); /* Цвет текста спиннера */
+  height: 100vh;
+  background-color: var(--spinner-bg, hsl(223, 10%, 90%));
+  color: var(--spinner-fg, hsl(223, 10%, 10%));
 }
 
 .pl,

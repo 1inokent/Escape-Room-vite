@@ -33,7 +33,7 @@ function App(): JSX.Element {
             </PrivateRoute>
           }
           />
-          <Route path={AppRoute.Reservation} element={
+          <Route path={AppRoute.MyQuests} element={
             <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
               <MyQuestPage />
             </PrivateRoute>

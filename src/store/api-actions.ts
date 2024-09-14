@@ -1,22 +1,28 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import { AppDispatch, Store } from '../types/store/store';
-import { Quests } from '../types/quests-types/quests-types';
 import { ApiRoute, AuthorizationStatus } from '../const';
+import { dropToken, getToken, saveToken } from '../service/token';
 import {
   getUserData,
   loadBookingById,
   loadQuestById,
   loadQuests,
+  loadReservation,
   requireAuthorization,
   setDataLoading,
   setError,
 } from './action';
-import { dropToken, getToken, saveToken } from '../service/token';
+
+import { AppDispatch, Store } from '../types/store/store';
+import { Quests } from '../types/quests-types/quests-types';
 import { UserData } from '../types/user-types';
 import { AuthData } from '../types/auth-data';
 import { QuestPage } from '../types/quests-types/quest-page-types';
-import { Bookings } from '../types/booking-types/booking-types';
+import {
+  Bookings,
+  FormValuesProps,
+} from '../types/booking-types/booking-types';
+import { ReservetionsTypes } from '../types/reservetion-types/reservetion-types';
 
 const fetchQuestsAction = createAsyncThunk<
   void,
@@ -57,9 +63,7 @@ const fetchQuestByIdAction = createAsyncThunk<
     dispatch(loadQuestById(data));
   } catch (error) {
     dispatch(
-      setError(
-        error instanceof Error ? error.message : 'Failed to fetch quest'
-      )
+      setError(error instanceof Error ? error.message : 'Failed to fetch quest')
     );
   } finally {
     dispatch(setDataLoading(false));
@@ -94,6 +98,31 @@ const fetchBookingByIdAction = createAsyncThunk<
     }
   }
 );
+
+const fetchReservationAction = createAsyncThunk<
+  void,
+  undefined,
+  {
+    dispatch: AppDispatch;
+    state: Store;
+    extra: AxiosInstance;
+  }
+>('myQuest/fetchReservationAction', async (_arg, { dispatch, extra: api }) => {
+  try {
+    dispatch(setDataLoading(false));
+    const { data } = await api.get<ReservetionsTypes>(ApiRoute.Reservation);
+
+    dispatch(loadReservation(data));
+  } catch (error) {
+    dispatch(
+      setError(
+        error instanceof Error ? error.message : 'Failed to fetch reservation'
+      )
+    );
+  } finally {
+    dispatch(setDataLoading(false));
+  }
+});
 
 const checkAuthAction = createAsyncThunk<
   void,
@@ -141,6 +170,56 @@ const loginAction = createAsyncThunk<
   }
 );
 
+const bookingSendAction = createAsyncThunk<
+  void,
+  { id: string; bookingData: FormValuesProps },
+  {
+    dispatch: AppDispatch;
+    state: Store;
+    extra: AxiosInstance;
+  }
+>(
+  'booking/bookingSendAction',
+  async ({ id, bookingData }, { dispatch, extra: api }) => {
+    try {
+      dispatch(setDataLoading(false));
+      await api.post(`${ApiRoute.Quest}/${id}${ApiRoute.Booking}`, bookingData);
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to send booking data'
+        )
+      );
+    } finally {
+      dispatch(setDataLoading(false));
+    }
+  }
+);
+
+const deleteBookingAction = createAsyncThunk<
+  void,
+  string,
+  {
+    dispatch: AppDispatch;
+    state: Store;
+    extra: AxiosInstance;
+  }
+>('booking/deleteBookingAction', async (id, { dispatch, extra: api }) => {
+  try {
+    dispatch(setDataLoading(false));
+    await api.delete(`${ApiRoute.Reservation}/${id}`);
+    await dispatch(fetchReservationAction());
+  } catch (error) {
+    dispatch(
+      setError(
+        error instanceof Error ? error.message : 'Failed to delete booking'
+      )
+    );
+  } finally {
+    dispatch(setDataLoading(false));
+  }
+});
+
 const logoutAction = createAsyncThunk<
   void,
   undefined,
@@ -162,4 +241,7 @@ export {
   loginAction,
   fetchQuestByIdAction,
   fetchBookingByIdAction,
+  fetchReservationAction,
+  bookingSendAction,
+  deleteBookingAction,
 };
