@@ -17,8 +17,8 @@ export type Slots = {
 export type Coordinates = [number, number];
 
 export type Location = {
-  address: string;
-  coords: Coordinates;
+  Address: string;
+  Coords: Coordinates;
 };
 
 export type Booking = {

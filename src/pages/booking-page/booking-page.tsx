@@ -31,17 +31,24 @@ function BookingPage():JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          await dispatch(fetchBookingByIdAction(id));
-        } catch (error) {
-          navigate('404');
-        }
-      }
-    };
+    let isMounted = true;
 
-    fetchData();
+    if (isMounted) {
+      const fetchData = async () => {
+        if (id) {
+          try {
+            await dispatch(fetchBookingByIdAction(id));
+          } catch (error) {
+            navigate('/404');
+          }
+        }
+      };
+      fetchData();
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, id, navigate]);
 
   if (!bookingsById || !questPage) {
@@ -49,7 +56,6 @@ function BookingPage():JSX.Element {
   }
 
   const selectedPlace = bookingsById?.find((booking) => booking.id === selectedPlaceId) || bookingsById[0];
-
 
   const onSubmit: SubmitHandler<FormValuesProps> = async (data) => {
     if (selectedSlot && id) {
@@ -119,13 +125,12 @@ function BookingPage():JSX.Element {
                   onPlaceSelect={setSelectedPlaceId}
                 />
               </div>
-              <p className="booking-map__address">Вы&nbsp;выбрали: {selectedPlace.location.address}</p>
+              <p className="booking-map__address">Вы&nbsp;выбрали: {selectedPlace.location.Address}</p>
             </div>
           </div>
 
           <form
             className="booking-form"
-            action="https://echo.htmlacademy.ru/"
             method="post"
             onSubmit={handleSubmit(onSubmit)}
           >

@@ -5,5 +5,3 @@ export interface QuestPage extends Quest {
   coverImg: string;
   coverImgWebp: string;
 }
-export { Quest };
-

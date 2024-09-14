@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
+
 import { deleteBookingAction, fetchReservationAction } from '../../store/api-actions';
 import { translateQuestAttributes } from '../../utils';
 import { AppRoute, AuthorizationStatus } from '../../const';
-import { useNavigate } from 'react-router-dom';
 
 function MyQuestPage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -21,16 +23,24 @@ function MyQuestPage(): JSX.Element {
   }, [isAutorized, navigate]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await dispatch(fetchReservationAction());
-        setErrorMessage(null);
-      } catch (error) {
-        setErrorMessage('Ошибка при загрузке данных. Попробуйте перезагрузить страницу.');
-      }
-    };
+    let isMounted = true;
 
-    fetchData();
+    if (isMounted) {
+      const fetchData = async () => {
+        try {
+          await dispatch(fetchReservationAction());
+          setErrorMessage(null);
+        } catch (error) {
+          setErrorMessage('Ошибка при загрузке данных. Попробуйте перезагрузить страницу.');
+        }
+      };
+
+      fetchData();
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch]);
 
   const handleDeleteBooking = (id: string) => {
@@ -61,7 +71,10 @@ function MyQuestPage(): JSX.Element {
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
           <div className="page-content__title-wrapper">
-            <h1 className="title title--size-m page-content__title">Мои бронирования</h1>
+            <h1 className="title title--size-m page-content__title">
+              {reservations.length === 0 ? 'Пока нет бронирования' : 'Мои бронирования'}
+            </h1>
+
           </div>
 
           <div className="cards-grid">
@@ -93,7 +106,7 @@ function MyQuestPage(): JSX.Element {
                       <div className="quest-card__info-wrapper">
                         <a className="quest-card__link" href={`quest/${reservation.quest.id}`}>{reservation.quest.title}</a>
                         <span className="quest-card__info">
-                      [{translateDay},&nbsp;{reservation.time}. {reservation.location.address}]
+                      [{translateDay},&nbsp;{reservation.time}. {reservation.location.Address}]
                         </span>
                       </div>
                       <ul className="tags quest-card__tags">

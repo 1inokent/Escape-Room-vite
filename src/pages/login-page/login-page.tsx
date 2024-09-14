@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
+
 import { useAppDispatch, useAppSelector } from '../../components/hook';
 import Header from '../../components/header/header';
-import { loginAction } from '../../store/api-actions';
+import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
+
+import { QuestPage } from '../../types/quests-types/quest-page-types';
 import { AppRoute, AuthorizationStatus } from '../../const';
+import { loginAction } from '../../store/api-actions';
 
 type FormInputProps = {
   userEmail: string;
@@ -17,6 +21,7 @@ interface LocationState {
 
 function LoginPage():JSX.Element {
   const dispatch = useAppDispatch();
+  const questPage = useAppSelector<QuestPage | null>((state) => state.questPage);
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
   const navigate = useNavigate();
 
@@ -55,6 +60,10 @@ function LoginPage():JSX.Element {
     }
   }, [authorizationStatus, from, navigate]);
 
+  if (!questPage) {
+    return <SpinnerLoader />;
+  }
+
   return (
     <div className="wrapper">
       <Header />
@@ -64,14 +73,14 @@ function LoginPage():JSX.Element {
           <picture>
             <source
               type="image/webp"
-              srcSet="img/content/maniac/maniac-size-m.webp, img/content/maniac/maniac-size-m@2x.webp 2x"
+              srcSet={questPage.coverImgWebp}
             />
             <img
-              src="img/content/maniac/maniac-size-m.jpg"
-              srcSet="img/content/maniac/maniac-size-m@2x.jpg 2x"
+              src={questPage.previewImg}
+              srcSet={questPage.coverImg}
+              alt={questPage.title}
               width="1366"
               height="768"
-              alt=""
             />
           </picture>
         </div>

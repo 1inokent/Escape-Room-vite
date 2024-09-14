@@ -1,6 +1,7 @@
 import { FieldErrors } from 'react-hook-form';
-import { Booking, FormValuesProps, Slot } from '../../types/booking-types/booking-types';
 import { ChangeEventHandler } from 'react';
+
+import { Booking, FormValuesProps, Slot } from '../../types/booking-types/booking-types';
 
 type BookingProps = {
   booking: Booking;
@@ -9,6 +10,11 @@ type BookingProps = {
   value: Slot | null;
   isSubmitting: boolean;
 }
+
+const TODAY_OR_TOMMOROW = {
+  TODAY: 'today',
+  TOMMOROW: 'tomorrow'
+} as const;
 
 function BookingDate({booking, onChange, errors, value, isSubmitting}: BookingProps):JSX.Element {
   const handleChange = (date: 'today' | 'tomorrow', time: string): ChangeEventHandler<HTMLInputElement> => () => {
@@ -30,10 +36,9 @@ function BookingDate({booking, onChange, errors, value, isSubmitting}: BookingPr
                   type="radio"
                   name="booking-time"
                   id={todaySlot.time}
-                  checked={value?.time === todaySlot.time && value?.date === 'today'}
-                  value={value?.time === todaySlot.time && value.date === 'today' ? 'checked' : ''}
+                  checked={value?.time === todaySlot.time && value?.date === TODAY_OR_TOMMOROW.TODAY}
                   disabled={!todaySlot.isAvailable}
-                  onChange={handleChange('today', todaySlot.time)}
+                  onChange={handleChange(TODAY_OR_TOMMOROW.TODAY, todaySlot.time)}
                 />
                 <span className="custom-radio__label">{todaySlot.time}</span>
               </label>
@@ -52,9 +57,9 @@ function BookingDate({booking, onChange, errors, value, isSubmitting}: BookingPr
                   type="radio"
                   name="booking-time"
                   id={tomorrowSlot.time}
-                  checked={value?.time === tomorrowSlot.time && value?.date === 'tomorrow'}
+                  checked={value?.time === tomorrowSlot.time && value?.date === TODAY_OR_TOMMOROW.TOMMOROW}
                   disabled={!tomorrowSlot.isAvailable}
-                  onChange={handleChange('tomorrow', tomorrowSlot.time)}
+                  onChange={handleChange(TODAY_OR_TOMMOROW.TOMMOROW, tomorrowSlot.time)}
                 />
                 <span className="custom-radio__label">{tomorrowSlot.time}</span>
               </label>
