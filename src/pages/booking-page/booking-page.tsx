@@ -132,6 +132,7 @@ function BookingPage():JSX.Element {
           <form
             className="booking-form"
             method="post"
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(onSubmit)}
           >
             <fieldset className="booking-form__section">

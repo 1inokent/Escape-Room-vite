@@ -90,6 +90,7 @@ function LoginPage():JSX.Element {
               className="login-form"
               action="https://echo.htmlacademy.ru/"
               method="post"
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="login-form__inner-wrapper">
