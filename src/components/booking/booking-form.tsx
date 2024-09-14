@@ -1,31 +1,31 @@
-import { useForm } from 'react-hook-form';
-import { QuestPage } from '../../types/quests-types/quest-page-types';
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
-type FormValues = {
-  name: string;
-  tel: string;
-  person: number;
-  children?: boolean;
-};
+import { FormValuesProps } from '../../types/booking-types/booking-types';
+import { Quest } from '../../types/quests-types/quests-types';
+
+import { useHookFormMask } from 'use-mask-input';
 
 type questProprs = {
-  quest: QuestPage;
+  quest: Quest;
+  register: UseFormRegister<FormValuesProps>;
+  errors: FieldErrors<FormValuesProps>;
+  isSubmitting: boolean;
 }
 
-function BookingForm({quest}: questProprs): JSX.Element {
-  const { register, formState: { errors } } = useForm<FormValues>();
+function BookingForm({quest, errors, register, isSubmitting}: questProprs): JSX.Element {
+  const registerWithMask = useHookFormMask(register);
 
   return (
     <>
-      <fieldset className="booking-form__section">
+      <fieldset className="booking-form__section" disabled={isSubmitting}>
         <legend className="visually-hidden">Контактная информация</legend>
 
         <div className="custom-input booking-form__input">
-          <label className="custom-input__label" htmlFor="name">Ваше имя</label>
+          <label className="custom-input__label" htmlFor="contactPerson">Ваше имя</label>
           <input
             type="text"
-            id="name"
-            {...register('name', {
+            id="contactPerson"
+            {...register('contactPerson', {
               required: 'Имя обязательно для заполнения',
               pattern: {
                 value: /^[А-Яа-яЁёA-Za-z'-]{1,15}$/,
@@ -34,32 +34,33 @@ function BookingForm({quest}: questProprs): JSX.Element {
             })}
             placeholder="Имя"
           />
-          {errors.name && <p className="error-message">{errors.name.message}</p>}
+          {errors.contactPerson && <p className="error-message">{errors.contactPerson.message}</p>}
         </div>
 
         <div className="custom-input booking-form__input">
-          <label className="custom-input__label" htmlFor="tel">Контактный телефон</label>
+          <label className="custom-input__label" htmlFor="phone">Контактный телефон</label>
           <input
             type="tel"
-            id="tel"
-            {...register('tel', {
+            id="phone"
+            {...registerWithMask('phone', '+7(999)999-99-99', {
               required: 'Телефон обязателен для заполнения',
               pattern: {
                 value: /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/,
-                message: 'Введите телефон в формате +7 (000) 000-00-00'
+                message: 'Введите телефон в формате +7(999)999-99-99'
               }
             })}
             placeholder="Телефон"
           />
-          {errors.tel && <p className="error-message">{errors.tel.message}</p>}
+          {errors.phone && <p className="error-message">{errors.phone.message}</p>}
         </div>
 
         <div className="custom-input booking-form__input">
-          <label className="custom-input__label" htmlFor="person">Количество участников</label>
+          <label className="custom-input__label" htmlFor="peopleCount">Количество участников</label>
           <input
             type="number"
-            id="person"
-            {...register('person', {
+            id="peopleCount"
+            {...register('peopleCount', {
+              valueAsNumber: true,
               required: 'Количество участников обязательно для заполнения',
               min: {
                 value: quest.peopleMinMax[0],
@@ -72,25 +73,28 @@ function BookingForm({quest}: questProprs): JSX.Element {
             })}
             placeholder="Количество участников"
           />
-          {errors.person && <p className="error-message">{errors.person.message}</p>}
+          {errors.peopleCount && <p className="error-message">{errors.peopleCount.message}</p>}
         </div>
 
         <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--children">
           <input
             type="checkbox"
-            id="children"
-            name="children"
-            checked
+            id="withChildren"
+            {...register('withChildren')}
           />
-          <span className="custom-checkbox__icon">
+          <span className="custom-checkbox__icon">``
             <svg width="20" height="17" aria-hidden="true">
               <use xlinkHref="#icon-tick"></use>
             </svg>
           </span><span className="custom-checkbox__label">Со&nbsp;мной будут дети</span>
         </label>
       </fieldset>
-
-      <button className="btn btn--accent btn--cta booking-form__submit" type="submit">Забронировать</button>
+      <button
+        className="btn btn--accent btn--cta booking-form__submit"
+        type="submit"
+        disabled={isSubmitting}
+      >Забронировать
+      </button>
     </>
   );
 }

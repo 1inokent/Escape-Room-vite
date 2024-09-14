@@ -1,8 +1,11 @@
-import { generatePath, Link, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
-import { useEffect, useState } from 'react';
+import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
+
 import { fetchQuestByIdAction } from '../../store/api-actions';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { translateQuestAttributes } from '../../utils';
@@ -17,25 +20,33 @@ function QuestPage(): JSX.Element {
   const id: string | null = paramId ?? null;
 
   useEffect(() => {
-    if (!id) {
-      return;
+    let isMounted = true;
+
+    if (isMounted) {
+      if (!id) {
+        return;
+      }
+
+      const fetchData = async () => {
+        if (id) {
+          try {
+            await dispatch(fetchQuestByIdAction(id));
+            setErrorMessage(null);
+          } catch (error) {
+            setErrorMessage('Ошибка при загрузке данных. Попробуйте перезагрузить страницу.');
+          }
+        }
+      };
+      fetchData();
     }
 
-    const fetchData = async () => {
-      if (id) {
-        try {
-          await dispatch(fetchQuestByIdAction(id));
-          setErrorMessage(null);
-        } catch (error) {
-          setErrorMessage('Ошибка при загрузке данных. Попробуйте перезагрузить страницу.');
-        }
-      }
+    return () => {
+      isMounted = false;
     };
-    fetchData();
   }, [dispatch, id]);
 
   if (!questPage) {
-    return <div>Can`t find quest page <Link to={AppRoute.Main}>Go back main page</Link></div>;
+    return <SpinnerLoader />;
   }
 
   const {

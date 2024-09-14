@@ -8,40 +8,87 @@ import BookingDate from '../../components/booking/booking-date';
 import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
 import Map from '../../components/map/map';
 
-import { fetchBookingByIdAction } from '../../store/api-actions';
+import { bookingSendAction, fetchBookingByIdAction } from '../../store/api-actions';
 
-import { Bookings } from '../../types/booking-types/booking-types';
+import { Bookings, FormValuesProps, Slot } from '../../types/booking-types/booking-types';
 import { QuestPage } from '../../types/quests-types/quest-page-types';
 import BookingForm from '../../components/booking/booking-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { AppRoute } from '../../const';
 
 function BookingPage():JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const bookingsById = useAppSelector<Bookings | null>((state) => state.reservedsQuest);
+  const bookingsById = useAppSelector<Bookings | null>((state) => state.bookingsQuest);
   const questPage = useAppSelector<QuestPage | null>((state) => state.questPage);
-  const { id } = useParams();
 
+  const { id } = useParams();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValuesProps>();
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          await dispatch(fetchBookingByIdAction(id));
-        } catch (error) {
-          navigate('404');
-        }
-      }
-    };
+    let isMounted = true;
 
-    fetchData();
+    if (isMounted) {
+      const fetchData = async () => {
+        if (id) {
+          try {
+            await dispatch(fetchBookingByIdAction(id));
+          } catch (error) {
+            navigate('/404');
+          }
+        }
+      };
+      fetchData();
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, id, navigate]);
 
   if (!bookingsById || !questPage) {
     return <SpinnerLoader />;
   }
 
-  const selectedPlace = bookingsById.find((booking) => booking.id === selectedPlaceId) || bookingsById[0];
+  const selectedPlace = bookingsById?.find((booking) => booking.id === selectedPlaceId) || bookingsById[0];
+
+  const onSubmit: SubmitHandler<FormValuesProps> = async (data) => {
+    if (selectedSlot && id) {
+      data.date = selectedSlot.date;
+      data.time = selectedSlot.time;
+      data.placeId = selectedPlace.id;
+    } else {
+      setErrorMessage('Пожалуйста, выберите слот времени.');
+      return;
+    }
+
+    if (id) {
+      setIsSubmitting(true);
+      try {
+        await dispatch(bookingSendAction({
+          id: id,
+          bookingData: data
+        }));
+        navigate(AppRoute.MyQuests);
+      } catch (error) {
+        setErrorMessage('Не удалось выполнить бронирование. Пожалуйста, проверьте данные и попробуйте снова.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      setErrorMessage('ID бронирования не найден.');
+    }
+  };
+
+
+  if (!selectedPlace) {
+    return <SpinnerLoader />;
+  }
 
   return (
     <div className="wrapper">
@@ -67,6 +114,8 @@ function BookingPage():JSX.Element {
             <p className="title title--size-m title--uppercase page-content__title">{questPage.title}</p>
           </div>
 
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+
           <div className="page-content__item">
             <div className="booking-map">
               <div className="map">
@@ -76,17 +125,33 @@ function BookingPage():JSX.Element {
                   onPlaceSelect={setSelectedPlaceId}
                 />
               </div>
-              <p className="booking-map__address">Вы&nbsp;выбрали: {selectedPlace.location.address}</p>
+              <p className="booking-map__address">Вы&nbsp;выбрали: {selectedPlace.location.Address}</p>
             </div>
           </div>
 
-          <form className="booking-form" action="https://echo.htmlacademy.ru/" method="post">
+          <form
+            className="booking-form"
+            method="post"
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <fieldset className="booking-form__section">
               <legend className="visually-hidden">Выбор даты и времени</legend>
-              <BookingDate booking={selectedPlace} />
+              <BookingDate
+                booking={selectedPlace}
+                onChange={setSelectedSlot}
+                value={selectedSlot}
+                errors={errors}
+                isSubmitting={isSubmitting}
+              />
             </fieldset>
 
-            <BookingForm quest={questPage} />
+            <BookingForm
+              quest={questPage}
+              register={register}
+              errors={errors}
+              isSubmitting={isSubmitting}
+            />
 
             <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--agreement">
               <input

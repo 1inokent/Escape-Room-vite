@@ -6,7 +6,7 @@ enum AppRoute {
   Contacts = '/contacts',
   Quest = '/quest/:id',
   Booking = '/quest/:id/booking',
-  Reservation = '/my-quests',
+  MyQuests = '/my-quests',
 }
 
 enum ApiRoute {
@@ -14,6 +14,7 @@ enum ApiRoute {
   Login = '/login',
   Logout = '/logout',
   Booking = '/booking',
+  Reservation = '/reservation',
 }
 
 enum SortingOptionLevelTitle {
@@ -62,9 +63,9 @@ const QUEST_LEVELS = [
 ] as const;
 
 const DEFAULT_LOCATION_FOR_CONTACTS: Location = {
-  address: 'Санкт-Петербург, Набережная реки Карповка, д 5П',
-  coords: [59.9635, 30.3368],
-};
+  Address: 'Санкт-Петербург, Набережная реки Карповка, д 5П',
+  Coords: [59.9635, 30.3368],
+} as const;
 
 const AUTH_TOKEN_KEY = 'escape-room-token';
 

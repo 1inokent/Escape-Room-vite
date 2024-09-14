@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
-import { QUEST_LEVELS, QUEST_TYPES } from '../../const';
+
 import { useAppDispatch, useAppSelector } from '../hook';
-import { SortingLevel } from '../../types/sorting-types/sorting-level';
+import { QUEST_LEVELS, QUEST_TYPES } from '../../const';
 import { setSortingOptionLevel, setSortingOptionTypes } from '../../store/action';
+
+import { SortingLevel } from '../../types/sorting-types/sorting-level';
 import { SortingTypes } from '../../types/sorting-types/sorting-types';
 
 function SortingOptions():JSX.Element {

@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
+
 import { useAppDispatch, useAppSelector } from '../../components/hook';
 import Header from '../../components/header/header';
-import { useEffect, useState } from 'react';
+import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
+
+import { QuestPage } from '../../types/quests-types/quest-page-types';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import { loginAction } from '../../store/api-actions';
 
@@ -17,8 +21,11 @@ interface LocationState {
 
 function LoginPage():JSX.Element {
   const dispatch = useAppDispatch();
+  const questPage = useAppSelector<QuestPage | null>((state) => state.questPage);
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
   const navigate = useNavigate();
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const location = useLocation();
   const state = location.state as LocationState | undefined;
@@ -31,14 +38,9 @@ function LoginPage():JSX.Element {
     formState: { errors }
   } = useForm<FormInputProps>();
 
-  useEffect(() => {
-    if (authorizationStatus === AuthorizationStatus.Auth) {
-      navigate(from);
-    }
-  }, [authorizationStatus, from, navigate]);
-
   const onSubmit: SubmitHandler<FormInputProps> = async (data) => {
     try {
+      setIsSubmitting(true);
       await dispatch(loginAction({
         login: data.userEmail,
         password: data.userPassword,
@@ -47,8 +49,20 @@ function LoginPage():JSX.Element {
       navigate(from);
     } catch (error) {
       setErrorMessage('Не удалось выполнить вход. Пожалуйста, проверьте данные и попробуйте снова.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      navigate(from);
+    }
+  }, [authorizationStatus, from, navigate]);
+
+  if (!questPage) {
+    return <SpinnerLoader />;
+  }
 
   return (
     <div className="wrapper">
@@ -59,14 +73,14 @@ function LoginPage():JSX.Element {
           <picture>
             <source
               type="image/webp"
-              srcSet="img/content/maniac/maniac-size-m.webp, img/content/maniac/maniac-size-m@2x.webp 2x"
+              srcSet={questPage.coverImgWebp}
             />
             <img
-              src="img/content/maniac/maniac-size-m.jpg"
-              srcSet="img/content/maniac/maniac-size-m@2x.jpg 2x"
+              src={questPage.previewImg}
+              srcSet={questPage.coverImg}
+              alt={questPage.title}
               width="1366"
               height="768"
-              alt=""
             />
           </picture>
         </div>
@@ -76,6 +90,7 @@ function LoginPage():JSX.Element {
               className="login-form"
               action="https://echo.htmlacademy.ru/"
               method="post"
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="login-form__inner-wrapper">
@@ -87,6 +102,7 @@ function LoginPage():JSX.Element {
                       type="email"
                       id="email"
                       placeholder="Адрес электронной почты"
+                      disabled={isSubmitting}
                       {...register('userEmail', {
                         required: 'Email обязателен',
                         pattern: {
@@ -103,6 +119,7 @@ function LoginPage():JSX.Element {
                       type="password"
                       id="password"
                       placeholder="Пароль"
+                      disabled={isSubmitting}
                       {...register('userPassword', {
                         required: 'Пароль обязателен',
                         minLength: { value: 3, message: 'Пароль должен быть минимум 3 символа' },
@@ -116,10 +133,15 @@ function LoginPage():JSX.Element {
                     {errors.userPassword && <p className="error-message">{errors.userPassword.message}</p>}
                   </div>
                 </div>
-
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-                <button className="btn btn--accent btn--general login-form__submit" type="submit">Войти</button>
+                <button
+                  className="btn btn--accent btn--general login-form__submit"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Войти
+                </button>
               </div>
               <label className="custom-checkbox login-form__checkbox">
                 <input
