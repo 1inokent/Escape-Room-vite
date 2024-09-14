@@ -18,10 +18,7 @@ import { Quests } from '../types/quests-types/quests-types';
 import { UserData } from '../types/user-types';
 import { AuthData } from '../types/auth-data';
 import { QuestPage } from '../types/quests-types/quest-page-types';
-import {
-  Bookings,
-  FormValuesProps,
-} from '../types/booking-types/booking-types';
+import { Bookings, BookingPayload } from '../types/booking-types/booking-types';
 import { ReservetionsTypes } from '../types/reservetion-types/reservetion-types';
 
 const fetchQuestsAction = createAsyncThunk<
@@ -172,7 +169,7 @@ const loginAction = createAsyncThunk<
 
 const bookingSendAction = createAsyncThunk<
   void,
-  { id: string; bookingData: FormValuesProps },
+  { id: string; bookingData: BookingPayload },
   {
     dispatch: AppDispatch;
     state: Store;

@@ -1,4 +1,4 @@
-import { useAppSelector } from '../hook';
+import { useAppSelector } from '../../store/hook';
 import styles from './error-message.module.css';
 
 function ErrorMessage(): JSX.Element | null {

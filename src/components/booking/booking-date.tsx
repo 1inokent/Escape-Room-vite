@@ -1,11 +1,11 @@
 import { FieldErrors } from 'react-hook-form';
 import { ChangeEventHandler } from 'react';
 
-import { Booking, FormValuesProps, Slot } from '../../types/booking-types/booking-types';
+import { Booking, BookingPayload, Slot } from '../../types/booking-types/booking-types';
 
 type BookingProps = {
   booking: Booking;
-  errors: FieldErrors<FormValuesProps>;
+  errors: FieldErrors<BookingPayload>;
   onChange: (value: Slot) => void;
   value: Slot | null;
   isSubmitting: boolean;

@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
-import { useAppDispatch, useAppSelector } from '../../components/hook';
+import { useAppDispatch, useAppSelector } from '../../store/hook';
 import BookingDate from '../../components/booking/booking-date';
 import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
 import Map from '../../components/map/map';
 
 import { bookingSendAction, fetchBookingByIdAction } from '../../store/api-actions';
 
-import { Bookings, FormValuesProps, Slot } from '../../types/booking-types/booking-types';
+import { Bookings, BookingPayload, Slot } from '../../types/booking-types/booking-types';
 import { QuestPage } from '../../types/quests-types/quest-page-types';
 import BookingForm from '../../components/booking/booking-form';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -23,7 +23,7 @@ function BookingPage():JSX.Element {
   const questPage = useAppSelector<QuestPage | null>((state) => state.questPage);
 
   const { id } = useParams();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValuesProps>();
+  const { register, handleSubmit, formState: { errors } } = useForm<BookingPayload>();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
@@ -57,7 +57,7 @@ function BookingPage():JSX.Element {
 
   const selectedPlace = bookingsById?.find((booking) => booking.id === selectedPlaceId) || bookingsById[0];
 
-  const onSubmit: SubmitHandler<FormValuesProps> = async (data) => {
+  const onSubmit: SubmitHandler<BookingPayload> = async (data) => {
     if (selectedSlot && id) {
       data.date = selectedSlot.date;
       data.time = selectedSlot.time;

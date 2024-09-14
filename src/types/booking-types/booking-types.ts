@@ -17,8 +17,8 @@ export type Slots = {
 export type Coordinates = [number, number];
 
 export type Location = {
-  Address: string;
-  Coords: Coordinates;
+  address: string;
+  coords: Coordinates;
 };
 
 export type Booking = {
@@ -27,7 +27,7 @@ export type Booking = {
   slots: Slots;
 };
 
-export type FormValuesProps = {
+export type BookingPayload = {
   date: Slot['date'];
   time: Slot['time'];
   contactPerson: string;

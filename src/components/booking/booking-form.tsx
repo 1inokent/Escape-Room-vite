@@ -1,14 +1,14 @@
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
-import { FormValuesProps } from '../../types/booking-types/booking-types';
+import { BookingPayload } from '../../types/booking-types/booking-types';
 import { Quest } from '../../types/quests-types/quests-types';
 
 import { useHookFormMask } from 'use-mask-input';
 
 type questProprs = {
   quest: Quest;
-  register: UseFormRegister<FormValuesProps>;
-  errors: FieldErrors<FormValuesProps>;
+  register: UseFormRegister<BookingPayload>;
+  errors: FieldErrors<BookingPayload>;
   isSubmitting: boolean;
 }
 
