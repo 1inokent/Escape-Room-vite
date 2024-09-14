@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../hook';
+import { useAppDispatch, useAppSelector } from '../../store/hook';
 import { QUEST_LEVELS, QUEST_TYPES } from '../../const';
 import { setSortingOptionLevel, setSortingOptionTypes } from '../../store/action';
 

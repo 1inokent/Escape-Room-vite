@@ -1,6 +1,6 @@
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
-import { useAppSelector } from '../../components/hook';
+import { useAppSelector } from '../../store/hook';
 import QuestsList from '../../components/quests-list/quests-list';
 import SortingOptions from '../../components/sorting-options/sorting-options';
 import { QUEST_LEVELS, QUEST_TYPES, } from '../../const';

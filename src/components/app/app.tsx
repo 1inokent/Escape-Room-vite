@@ -9,7 +9,7 @@ import MyQuestPage from '../../pages/my-quest-page/my-quest-page';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
 import SpinnerLoader from '../spinner-loader/spinner-loader';
-import { useAppSelector } from '../hook';
+import { useAppSelector } from '../../store/hook';
 import PrivateRoute from '../private-route/private-route';
 import ErrorMessage from '../error-message/error-message';
 import NotFoundScreen from '../not-found-screen/NotFoundScreen';

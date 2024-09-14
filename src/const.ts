@@ -63,8 +63,8 @@ const QUEST_LEVELS = [
 ] as const;
 
 const DEFAULT_LOCATION_FOR_CONTACTS: Location = {
-  Address: 'Санкт-Петербург, Набережная реки Карповка, д 5П',
-  Coords: [59.9635, 30.3368],
+  address: 'Санкт-Петербург, Набережная реки Карповка, д 5П',
+  coords: [59.9635, 30.3368],
 } as const;
 
 const AUTH_TOKEN_KEY = 'escape-room-token';

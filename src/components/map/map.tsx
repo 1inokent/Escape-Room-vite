@@ -3,7 +3,7 @@ import leaflet, { LayerGroup, PointTuple } from 'leaflet';
 
 import { DEFAULT_LOCATION_FOR_CONTACTS, PATH_MARKER_CURRENT, PATH_MARKER_DEFAULT } from '../../const';
 import { Bookings } from '../../types/booking-types/booking-types';
-import useMap from '../hook/use-map/use-map';
+import useMap from './use-map';
 
 type MapProps = {
   availableQuests?: Bookings;
@@ -51,8 +51,8 @@ function Map({ availableQuests = [], selectedPlaceId, onPlaceSelect }: MapProps)
         const marker = leaflet
           .marker(
             {
-              lat: quest.location.Coords[0],
-              lng: quest.location.Coords[1],
+              lat: quest.location.coords[0],
+              lng: quest.location.coords[1],
             }, {
               icon: (isSelected) ? currentIcon : defaultIcon
             }
@@ -68,8 +68,8 @@ function Map({ availableQuests = [], selectedPlaceId, onPlaceSelect }: MapProps)
       leaflet
         .marker(
           {
-            lat: DEFAULT_LOCATION_FOR_CONTACTS.Coords[0],
-            lng: DEFAULT_LOCATION_FOR_CONTACTS.Coords[1],
+            lat: DEFAULT_LOCATION_FOR_CONTACTS.coords[0],
+            lng: DEFAULT_LOCATION_FOR_CONTACTS.coords[1],
           }, {
             icon: currentIcon
           }

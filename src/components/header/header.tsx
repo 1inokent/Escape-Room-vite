@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
-import { useAppDispatch, useAppSelector } from '../hook';
+import { useAppDispatch, useAppSelector } from '../../store/hook';
 import { logoutAction } from '../../store/api-actions';
 
 function Header(): JSX.Element {

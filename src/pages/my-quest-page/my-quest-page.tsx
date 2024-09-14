@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
-import { useAppDispatch, useAppSelector } from '../../components/hook';
+import { useAppDispatch, useAppSelector } from '../../store/hook';
 
 import { deleteBookingAction, fetchReservationAction } from '../../store/api-actions';
 import { translateQuestAttributes } from '../../utils';

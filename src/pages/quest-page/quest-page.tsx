@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
-import { useAppDispatch, useAppSelector } from '../../components/hook';
+import { useAppDispatch, useAppSelector } from '../../store/hook';
 import SpinnerLoader from '../../components/spinner-loader/spinner-loader';
 
 import { fetchQuestByIdAction } from '../../store/api-actions';
